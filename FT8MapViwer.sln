@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FT8MapViwer", "FT8MapViwer.csproj", "{712EC695-41FA-4EB5-B04A-2F0F0197CC86}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{712EC695-41FA-4EB5-B04A-2F0F0197CC86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{712EC695-41FA-4EB5-B04A-2F0F0197CC86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{712EC695-41FA-4EB5-B04A-2F0F0197CC86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{712EC695-41FA-4EB5-B04A-2F0F0197CC86}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8DF1E076-7095-4F84-A6FE-57E73D84D6F4}
+	EndGlobalSection
+EndGlobal
