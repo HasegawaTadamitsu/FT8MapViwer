@@ -48,6 +48,7 @@
             // 
             // btnStartEnd
             // 
+            this.btnStartEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnStartEnd.Location = new System.Drawing.Point(848, 515);
             this.btnStartEnd.Name = "btnStartEnd";
             this.btnStartEnd.Size = new System.Drawing.Size(75, 23);
@@ -114,6 +115,8 @@
             // 
             // tbMessage
             // 
+            this.tbMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMessage.Location = new System.Drawing.Point(12, 515);
             this.tbMessage.Multiline = true;
             this.tbMessage.Name = "tbMessage";
@@ -125,6 +128,7 @@
             // 
             // lblDataRecive
             // 
+            this.lblDataRecive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblDataRecive.AutoSize = true;
             this.lblDataRecive.Location = new System.Drawing.Point(848, 541);
             this.lblDataRecive.Name = "lblDataRecive";
@@ -134,17 +138,24 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::FT8MapViwer.Properties.Resources.worldMap;
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox1.InitialImage = global::FT8MapViwer.Properties.Resources.worldMap;
             this.pictureBox1.Location = new System.Drawing.Point(-1, 27);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(981, 482);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseWheel);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             // 
             // labPos
             // 
+            this.labPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labPos.AutoSize = true;
             this.labPos.Location = new System.Drawing.Point(848, 572);
             this.labPos.Name = "labPos";
