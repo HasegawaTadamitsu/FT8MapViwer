@@ -27,23 +27,31 @@ public class UdpCommunicator
 
     private void doExec()
     {
-        string localIpString = "192.168.0.181";
-        System.Net.IPAddress localAddress =
-            System.Net.IPAddress.Parse(localIpString);
+        try
+        {
+            string localIpString = "192.168.0.181";
+            System.Net.IPAddress localAddress =
+                System.Net.IPAddress.Parse(localIpString);
 
-        writeMsg("info  listenIP=" + localIpString + " port=" + receivePort);
-        System.Net.IPEndPoint localEP =
-            new System.Net.IPEndPoint(localAddress, receivePort);
-        udpClient = new System.Net.Sockets.UdpClient(localEP);
-
+            writeMsg("info  listenIP=" + localIpString + " port=" + receivePort);
+            System.Net.IPEndPoint localEP =
+                new System.Net.IPEndPoint(localAddress, receivePort);
+            udpClient = new System.Net.Sockets.UdpClient(localEP);
+        }
+        catch (System.Net.Sockets.SocketException e)
+        {
+            writeMsg("exception  " + e);
+            Console.WriteLine("exception " + e);
+            writeMsg("他で同一PGが立ち上がっている可能性があります。");
+            return;
+        }
         try
         {
             for (; ; )
             {
                 System.Net.IPEndPoint remoteEP = null;
-                byte[] rcvBytes = udpClient.Receive(ref remoteEP);
-                writeMsg("receive " + rcvBytes.Length);
-                onReceive(rcvBytes);
+                byte[] data = udpClient.Receive(ref remoteEP);
+                onReceive(data);
             }
         }
         catch (System.Net.Sockets.SocketException e)
