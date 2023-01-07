@@ -8,12 +8,6 @@ namespace haselab
         private bool runningFlg = true;
         private UdpCommunicator udpCom;
         private ImageMgr imgMgr;
-        // マウスをクリックした位置の保持用  
-        private PointF OldPoint;
-        // アフィン変換行列  
-        private System.Drawing.Drawing2D.Matrix mat;
-        // マウスダウンフラグ  
-        private bool MouseDownFlg = false;
         private List<ReceiveAnime> recieveAnimes = new List<ReceiveAnime>();
         private DataReceiveLED receiveLed;
 
@@ -28,168 +22,47 @@ namespace haselab
 
             imgMgr = new ImageMgr(pictureBox1.Width, pictureBox1.Height);
             changeStatus();
-            pictureBox1.Image = imgMgr.getImageOrg();
-            Form1_Resize(null, null);
-
-            mat = new System.Drawing.Drawing2D.Matrix((float)0.44444445, (float)0, (float)0, (float)0.44444445, (float)-5232.223, (float)-716.41693);
-            DrawImage();
 
             // this.pictureBox1.MouseHover += new System.EventHandler(this.pictureBox1_MouseHover);
             receiveLed.doStop();
         }
 
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            if (mat == null)
-            {
-                Bitmap backImage = imgMgr.getImageOrg();
-                Graphics g = Graphics.FromImage(backImage);
-                mat = g.Transform;
-                g.Dispose();
-                g = null;
-            }
-            // 画像の描画  
-            DrawImage();
-
-        }
-        // ビットマップの描画  
         private void DrawImage()
         {
             debugWrite("Start Draw");
 
-            // PictureBoxと同じ大きさのBitmapクラスを作成する。  
-            Bitmap bmpPicBox = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            // 空のBitmapをPictureBoxのImageに指定する。  
-            pictureBox1.Image = bmpPicBox;
-            // Graphicsオブジェクトの作成(FromImageを使う)  
-            Graphics gp = Graphics.FromImage(pictureBox1.Image);
-            // アフィン変換行列の設定  
-            gp.Transform = mat;
-
-
-
-            debugWrite("Start step1");
-
-            // 補間モードの設定
-            gp.InterpolationMode
-                = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-
-            // ピクチャボックスのクリア  
-            gp.Clear(pictureBox1.BackColor);
-
             var img = imgMgr.getImageOrg();
-            Graphics go = Graphics.FromImage(img);
-            //Pen p = new Pen(Color.Black, 10);
-            //go.DrawRectangle(p, img.Width / 3, img.Height / 3,
-            //    img.Width/ 2, img.Height / 2);
             var po = imgMgr.getMyPicBoxPo();
-            // var el = mat.Elements;
-            // int zz = (int)Math.Round((float)img.Width / el[0] * 10000.0);
-            // int zz = (int)Math.Round(1 / el[0] * 10.0);
-            //writeMsg("mat = " + zz + " el[0]" + el[0] + " img.Width" + img.Width);
-            // go.FillEllipse(Brushes.Black, po.X, po.Y, zz, zz);
+            Graphics go = Graphics.FromImage(img);
+
 
             debugWrite("Start step2");
 
             var pen = new Pen(Color.Black, 1);
             foreach (var data in recieveAnimes)
             {
-                var longLat = data.getLongLat();
-                var po2 = imgMgr.toChangePoint(longLat);
+                var toLongLat = data.getToLongLat();
+                var toPoint = imgMgr.toChangePoint(toLongLat);
+
+                var fromLongLat = data.getStartLongLat();
+                var fromPoint = imgMgr.toChangePoint(fromLongLat);
 
                 //go.FillEllipse(Brushes.Black, po2.X, po2.Y ,10, 10);
-                go.DrawLine(pen, po.X, po.Y, po2.X, po2.Y);
+                go.DrawLine(pen, fromPoint.X, fromPoint.Y, toPoint.X, toPoint.Y);
             }
 
             debugWrite("Start step3");
 
             // 描画  
-            gp.DrawImage(img, 0, 0);
+            go.DrawImage(img, 0, 0);
             go.Dispose();
-            gp.Dispose();
 
             debugWrite("Start step4");
 
-            // 再描画  
-            pictureBox1.Refresh();
+            pictureBox1.Image= img;
             debugWrite("Start end");
 
         }
-
-        // マウスホイールイベント  
-        private void pictureBox1_MouseWheel(object? sender, MouseEventArgs e)
-        {
-            // ポインタの位置→原点へ移動  
-            mat.Translate(-e.X, -e.Y,
-                System.Drawing.Drawing2D.MatrixOrder.Append);
-            if (e.Delta > 0)
-            {
-                // 拡大  
-                if (mat.Elements[0] < 100)  // X方向の倍率を代表してチェック  
-                {
-                    mat.Scale(1.5f, 1.5f,
-                        System.Drawing.Drawing2D.MatrixOrder.Append);
-                }
-            }
-            else
-            {
-                // 縮小  
-                if (mat.Elements[0] > 0.01)  // X方向の倍率を代表してチェック  
-                {
-                    mat.Scale(1.0f / 1.5f, 1.0f / 1.5f,
-                        System.Drawing.Drawing2D.MatrixOrder.Append);
-                }
-            }
-            // 原点→ポインタの位置へ移動(元の位置へ戻す)  
-            mat.Translate(e.X, e.Y,
-                System.Drawing.Drawing2D.MatrixOrder.Append);
-            // 画像の描画  
-            DrawImage();
-        }
-        private void pictureBox1_MouseDown(object? sender, MouseEventArgs e)
-        {
-            // 右ボタンがクリックされたとき  
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                // アフィン変換行列に単位行列を設定する  
-                mat.Reset();
-                // 画像の描画  
-                DrawImage();
-
-                return;
-            }
-            // フォーカスの設定  
-            //（クリックしただけではMouseWheelイベントが有効にならない）  
-            pictureBox1.Focus();
-            // マウスをクリックした位置の記録  
-            OldPoint.X = e.X;
-            OldPoint.Y = e.Y;
-            // マウスダウンフラグ  
-            MouseDownFlg = true;
-        }
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-            // マウスをクリックしながら移動中のとき  
-            if (MouseDownFlg == true)
-            {
-                // 画像の移動  
-                mat.Translate(e.X - OldPoint.X, e.Y - OldPoint.Y,
-                    System.Drawing.Drawing2D.MatrixOrder.Append);
-                // 画像の描画  
-                DrawImage();
-
-                // ポインタ位置の保持  
-                OldPoint.X = e.X;
-                OldPoint.Y = e.Y;
-            }
-        }
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-        {
-            // マウスダウンフラグ  
-            MouseDownFlg = false;
-        }
-
-
 
         private void btnStartEnd_Click(object sender, EventArgs e)
         {
@@ -243,14 +116,14 @@ namespace haselab
             WJSTAnalizer an = new WJSTAnalizer(bytes);
             int mode = an.getHeader();
 
-            writeMsg("size=" + bytes.Length + " header mode=" + mode);
+            // writeMsg("size=" + bytes.Length + " header mode=" + mode);
             receiveLed.doReceive();
 
             if (mode != 2) return;
             var gr = GridLocator.getLastGridLocator(an.getMsg());
             if (gr == null) return;
             writeMsg("dt:" + an.getDT() + " freq: "
-                + an.getFreq() + " msg: " + an.getMsg() + " GR:" + gr.getGridLocator());
+                + an.getFreq() + " msg:[" + an.getMsg() + "] GL:" + gr.getGridLocator());
             var ra = new ReceiveAnime(imgMgr.getMyGridLocator(), gr);
             recieveAnimes.Add(ra);
         }

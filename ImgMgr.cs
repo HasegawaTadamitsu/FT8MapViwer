@@ -33,8 +33,8 @@
     {
         //var x = (int)Math.Round((longLat[0] + 180) / 360 * picSize.X);
         //var y = (int)Math.Round((-longLat[1] + 90) / 180 * picSize.Y);
-        var x = (int)Math.Round((longLat[0]  - 120 ) / (160-120) * picSize.X);
-        var y = (int)Math.Round((-longLat[1] +  46 ) / (46-18) * picSize.Y);
+        var x = (int)Math.Round((longLat[0]  - 121 ) / (150-121) * picSize.X);
+        var y = (int)Math.Round((-longLat[1] +  46 ) / (46-24) * picSize.Y);
         return new Point(x, y);
     }
 

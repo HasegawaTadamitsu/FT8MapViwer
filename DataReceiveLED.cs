@@ -28,7 +28,7 @@
     public void doReceive()
     {
         notReceiveing();
-        counter = 2;
+        counter = 10;
     }
 
     public void doExec()
