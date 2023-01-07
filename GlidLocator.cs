@@ -2,15 +2,15 @@
 
 public class GridLocator
 {
-    private String gl;
-    private double x;
-    private double y;
+    private String gridLocator;
+    private double aLong;
+    private double aLat;
     public GridLocator(String arg)
     {
-        gl = arg;
+        gridLocator = arg;
         double[] o = calc(arg);
-        x = o[0];
-        y = o[1];
+        aLong = o[0];
+        aLat = o[1];
 
     }
     private static double[] calc(String gl)
@@ -21,21 +21,32 @@ public class GridLocator
         return new double[2] { x, y };
 
     }
-    public double getX()
+    public double getLong()
     {
-        return x;
+        return aLong;
     }
-    public double getY()
+    public double getLat()
     {
-        return y;
+        return aLat;
     }
-
-    public Boolean isGridLocator(String arg)
+    public String getGridLocator()
+    {
+        return gridLocator;
+    }
+    public static Boolean isGridLocator(String arg)
     {
         if (arg.Length != 4) return false;
         bool result = Regex.IsMatch(arg, "^[A-Z]{2}[0-9]{2}$");
         if (result == false) return false;
         if (arg == "RR73") return false;
         return true;
+    }
+
+    public static GridLocator getLastGridLocator(String msg)
+    {
+        string[] arr = msg.Split(' ');
+        var gr = arr.Last();
+        if (!GridLocator.isGridLocator(gr)) return null;
+        return new GridLocator(gr);
     }
 }

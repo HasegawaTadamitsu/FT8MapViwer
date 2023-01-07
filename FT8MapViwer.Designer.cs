@@ -29,6 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnStartEnd = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +42,7 @@
             this.lblDataRecive = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.labPos = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -132,26 +134,26 @@
             this.lblDataRecive.AutoSize = true;
             this.lblDataRecive.Location = new System.Drawing.Point(848, 541);
             this.lblDataRecive.Name = "lblDataRecive";
-            this.lblDataRecive.Size = new System.Drawing.Size(64, 15);
+            this.lblDataRecive.Size = new System.Drawing.Size(50, 15);
             this.lblDataRecive.TabIndex = 5;
-            this.lblDataRecive.Text = "dataRecive";
+            this.lblDataRecive.Text = "init now";
             // 
             // pictureBox1
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.InitialImage = global::FT8MapViwer.Properties.Resources.worldMap;
+            this.pictureBox1.InitialImage = global::FT8MapViwer.Properties.Resources.japanMap;
             this.pictureBox1.Location = new System.Drawing.Point(-1, 27);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(981, 482);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseWheel);
-            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
+            this.pictureBox1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseWheel);
             // 
             // labPos
             // 
@@ -162,6 +164,12 @@
             this.labPos.Size = new System.Drawing.Size(50, 15);
             this.labPos.TabIndex = 7;
             this.labPos.Text = "init now";
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // FT8MapViwer
             // 
@@ -203,5 +211,6 @@
         private Label lblDataRecive;
         private PictureBox pictureBox1;
         private Label labPos;
+        private System.Windows.Forms.Timer timer1;
     }
 }

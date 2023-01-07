@@ -9,8 +9,6 @@ public class UdpCommunicator
 
     public delegate void OnReceiveDelegater(byte[] args);
     public OnReceiveDelegater onReceive;
-    public delegate void OnExceptionReceiveDelegater();
-    public OnExceptionReceiveDelegater toStop;
     public delegate void WriteMsgDelegater(String msg);
     public WriteMsgDelegater writeMsg;
     private System.Net.Sockets.UdpClient udpClient;
@@ -62,7 +60,6 @@ public class UdpCommunicator
         {
             writeMsg("exception  " + e);
             Console.WriteLine("exception " + e);
-            toStop();
         }
     }
 

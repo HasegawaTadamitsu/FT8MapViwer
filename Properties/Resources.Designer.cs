@@ -73,9 +73,9 @@ namespace FT8MapViwer.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        internal static System.Drawing.Bitmap worldMap {
+        internal static System.Drawing.Bitmap japanMap {
             get {
-                object obj = ResourceManager.GetObject("worldMap", resourceCulture);
+                object obj = ResourceManager.GetObject("japan_map", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace haselab
 {
     public partial class FT8MapViwer : Form
@@ -12,6 +14,8 @@ namespace haselab
         private System.Drawing.Drawing2D.Matrix mat;
         // マウスダウンフラグ  
         private bool MouseDownFlg = false;
+        private List<ReceiveAnime> recieveAnimes = new List<ReceiveAnime>();
+        private DataReceiveLED receiveLed;
 
         public FT8MapViwer()
         {
@@ -19,7 +23,8 @@ namespace haselab
             udpCom = new UdpCommunicator();
             udpCom.onReceive += doReceive;
             udpCom.writeMsg += writeMsg;
-            udpCom.toStop += toStop;
+            receiveLed = new DataReceiveLED();
+            receiveLed.setLEDLabel += setReceivingLED;
 
             imgMgr = new ImageMgr(pictureBox1.Width, pictureBox1.Height);
             changeStatus();
@@ -30,6 +35,7 @@ namespace haselab
             DrawImage();
 
             // this.pictureBox1.MouseHover += new System.EventHandler(this.pictureBox1_MouseHover);
+            receiveLed.doStop();
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -49,6 +55,8 @@ namespace haselab
         // ビットマップの描画  
         private void DrawImage()
         {
+            debugWrite("Start Draw");
+
             // PictureBoxと同じ大きさのBitmapクラスを作成する。  
             Bitmap bmpPicBox = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             // 空のBitmapをPictureBoxのImageに指定する。  
@@ -56,20 +64,16 @@ namespace haselab
             // Graphicsオブジェクトの作成(FromImageを使う)  
             Graphics gp = Graphics.FromImage(pictureBox1.Image);
             // アフィン変換行列の設定  
-            if (mat != null)
-            {
-                gp.Transform = mat;
-            }
+            gp.Transform = mat;
+
+
+
+            debugWrite("Start step1");
 
             // 補間モードの設定
             gp.InterpolationMode
                 = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
-            // アフィン変換行列の設定  
-            if ((mat != null))
-            {
-                gp.Transform = mat;
-            }
             // ピクチャボックスのクリア  
             gp.Clear(pictureBox1.BackColor);
 
@@ -77,26 +81,39 @@ namespace haselab
             Graphics go = Graphics.FromImage(img);
             //Pen p = new Pen(Color.Black, 10);
             //go.DrawRectangle(p, img.Width / 3, img.Height / 3,
-            //    img.Width / 2, img.Height / 2);
-            var po = imgMgr.getMyPicBoxPo(new Point(img.Width, img.Height));
-            int zz = (img.Width - img.Height) / 100;
-            go.FillEllipse(Brushes.Black, po.X, po.Y, zz, zz);
+            //    img.Width/ 2, img.Height / 2);
+            var po = imgMgr.getMyPicBoxPo();
+            // var el = mat.Elements;
+            // int zz = (int)Math.Round((float)img.Width / el[0] * 10000.0);
+            // int zz = (int)Math.Round(1 / el[0] * 10.0);
+            //writeMsg("mat = " + zz + " el[0]" + el[0] + " img.Width" + img.Width);
+            // go.FillEllipse(Brushes.Black, po.X, po.Y, zz, zz);
 
-            // debug for initial mat
-            /*String msg = "";
-            foreach(var data in mat.Elements)
+            debugWrite("Start step2");
+
+            var pen = new Pen(Color.Black, 1);
+            foreach (var data in recieveAnimes)
             {
-                msg += " " + data;
+                var longLat = data.getLongLat();
+                var po2 = imgMgr.toChangePoint(longLat);
+
+                //go.FillEllipse(Brushes.Black, po2.X, po2.Y ,10, 10);
+                go.DrawLine(pen, po.X, po.Y, po2.X, po2.Y);
             }
-            writeMsg("mat = " + msg);
-            */
+
+            debugWrite("Start step3");
 
             // 描画  
             gp.DrawImage(img, 0, 0);
             go.Dispose();
             gp.Dispose();
+
+            debugWrite("Start step4");
+
             // 再描画  
             pictureBox1.Refresh();
+            debugWrite("Start end");
+
         }
 
         // マウスホイールイベント  
@@ -185,6 +202,10 @@ namespace haselab
             return (dt.ToString("yyyy/MM/dd HH:mm:ss"));
 
         }
+        public void debugWrite(String msg)
+        {
+            Debug.WriteLine(getNow() + " " + msg);
+        }
 
         private void changeStatus()
         {
@@ -223,12 +244,17 @@ namespace haselab
             int mode = an.getHeader();
 
             writeMsg("size=" + bytes.Length + " header mode=" + mode);
+            receiveLed.doReceive();
+
             if (mode != 2) return;
-            //            writeMsg("dump:" + an.dump());
-            writeMsg("dt:" + an.getDT());
-            writeMsg("freq:" + an.getFreq());
-            writeMsg("msg:" + an.getMsg());
+            var gr = GridLocator.getLastGridLocator(an.getMsg());
+            if (gr == null) return;
+            writeMsg("dt:" + an.getDT() + " freq: "
+                + an.getFreq() + " msg: " + an.getMsg() + " GR:" + gr.getGridLocator());
+            var ra = new ReceiveAnime(imgMgr.getMyGridLocator(), gr);
+            recieveAnimes.Add(ra);
         }
+
         private void configToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form dlg = new dlIsExit();
@@ -239,6 +265,30 @@ namespace haselab
             }
         }
 
+        delegate void SetReceivingLEDCallback(Boolean text);
+        public void setReceivingLED(Boolean receivingFlg)
+        {
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                SetReceivingLEDCallback delegateMethod = new SetReceivingLEDCallback(setReceivingLED);
+                this.Invoke(delegateMethod, new object[] { receivingFlg });
+            }
+            else
+            {
+
+                if (receivingFlg)
+                {
+                    this.lblDataRecive.Text = "receiving.";
+                    this.lblDataRecive.ForeColor = Color.Red;
+                }
+                else
+                {
+                    this.lblDataRecive.Text = "wait.";
+                    this.lblDataRecive.ForeColor = Color.Black;
+                }
+            }
+        }
         delegate void SetTextCallback(string text);
 
         public void writeMsg(String msg)
@@ -264,6 +314,32 @@ namespace haselab
             {
                 this.Close();
             }
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+
+            receiveLed.doExec();
+            if (recieveAnimes.Count == 0) return;
+            List<int> deleteList = new List<int>();
+            int i = 0;
+            foreach (var data in recieveAnimes)
+            {
+                var co = data.doExec();
+                if (co <= 0)
+                {
+                    deleteList.Add(i);
+                }
+                i++;
+            }
+            deleteList.Reverse();
+            foreach (var index in deleteList)
+            {
+                recieveAnimes.RemoveAt(index);
+            }
+
+            this.DrawImage();
 
         }
     }
