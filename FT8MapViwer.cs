@@ -20,7 +20,7 @@ namespace haselab
             receiveLed = new DataReceiveLED();
             receiveLed.setLEDLabel += setReceivingLED;
 
-            imgMgr = new ImageMgr(pictureBox1.Width, pictureBox1.Height);
+            imgMgr = new ImageMgr();
             changeStatus();
 
             // this.pictureBox1.MouseHover += new System.EventHandler(this.pictureBox1_MouseHover);
